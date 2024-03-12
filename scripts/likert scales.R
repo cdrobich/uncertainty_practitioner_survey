@@ -5,10 +5,10 @@ library(viridis)
 library(patchwork)
 
 # data with column names as codes
-likert_data <- read.csv("data/often.csv")
+likert_often <- read.csv("data/often.csv")
 likert_impact <- read.csv("data/impacts.csv")
 
-colnames(likert_data)
+colnames(likert_often)
 
 # [1] "Often"               "Always"              "Most.of.the.time"   
 # [4] "About.half.the.time" "Sometimes"           "Never"
@@ -24,7 +24,7 @@ colnames(likert_impact)
 ######### Likert Uncertainty Often ########
 
 
-likert_data$Often <- recode_factor(likert_data$Often,
+likert_often$Often <- recode_factor(likert_often$Often,
                            "The environment (e.g., any physical or ecological aspect of a system)"  = "The environment",
                            "The evidence (e.g., existing knowledge on an intervention or management strategy)" = "Evidence",
                            "The actions or decisions of teammates, and/or colleagues)"  = "Teammates and/or colleagues",
@@ -45,25 +45,25 @@ likert_impact$Impact <- recode_factor(likert_impact$Impact,
 
 
 
-colnames(likert_data)
+colnames(likert_often)
 
-likert_often <- likert_data %>% pivot_longer(Always:Never,
+likert_oft <- likert_often %>% pivot_longer(Always:Never,
                              names_to = "ranking",
                              values_to = "count")
 
-likert_often <- likert_often %>% rename(type = Often)
+likert_oft <- likert_oft %>% rename(type = Often)
 
 
-often_sum <- likert_often %>% 
+often_sum <- likert_oft %>% 
             group_by(type) %>% 
             mutate(Sum = sum(count)) %>% 
             group_by(ranking) %>% 
             mutate(percent = round(100*count/Sum, 2))
 
 
-unique(likert_often$ranking)
+unique(likert_oft$ranking)
 
-likert_often$ranking <- factor(likert_often$ranking,
+likert_oft$ranking <- factor(likert_oft$ranking,
                                levels = c("Never",
                                           "Sometimes",
                                           "About.half.the.time",
@@ -71,16 +71,13 @@ likert_often$ranking <- factor(likert_often$ranking,
                                           "Always"))
 
 
-likert_often
+likert_oft
 
-write.csv(likert_often, 'data/likert_often.csv')
+write.csv(likert_oft, 'data/likert_often.csv')
 write.csv(often_sum, 'data/likert_often_sum.csv')
 
 
 unique(likert_often$type)
-
-
-
 unique(likert_often$ranking)
 
 
@@ -103,16 +100,17 @@ colours = c("Always" = "#005f73",
             "Never" = "#9b2226")
 
 
-often_sum$ranking <- factor(often_sum$ranking, levels = c('Always',
-                                                'Most of the time',
-                                                'About half the time',
-                                                'Sometimes',
-                                                'Never'))
+
 
 often_sum$ranking <- recode_factor(often_sum$ranking,
                                    'Most.of.the.time' = 'Most of the time',
                                    'About.half.the.time' = 'About half the time')
 
+often_sum$ranking <- factor(often_sum$ranking, levels = c('Always',
+                                                          'Most of the time',
+                                                          'About half the time',
+                                                          'Sometimes',
+                                                          'Never'))
 unique(often_sum$type)
 
 
@@ -127,11 +125,10 @@ often_plot <- ggplot(data = often_sum, aes(x = type, y = percent, fill = ranking
                   axis.title=element_text(size=14),
                   legend.text = element_text(size=12),
                   legend.title = element_blank()) +
-            ggtitle("How often does _____ cause you uncertainty?") +
+            ggtitle("I experience uncertainty when considering...") +
             guides(fill = guide_legend(reverse = TRUE)) +
             scale_fill_manual(values = colours)
 
-# ,
 # label.position = "bottom"
 # legend.position = "bottom"
 
@@ -183,7 +180,7 @@ impact_plot <- ggplot(data = impact_sum, aes(x = Impact, y = percent, fill = ran
                   axis.title=element_text(size=14),
                   legend.text = element_text(size=12),
                   legend.title = element_blank()) +
-            ggtitle("How does _____ impact your ability to make decisions?") +
+            ggtitle("The following sources of uncertainty impact my decisions...") +
             guides(fill = guide_legend(reverse = T))
 
 
@@ -191,3 +188,4 @@ likert_plot <- often_plot / impact_plot + plot_annotation(tag_levels = 'A')
 likert_plot
 
 ggsave('output/likert_often_impact.jpg', likert_plot)
+ggsave('output/likert_often_impact.tiff', likert_plot)
