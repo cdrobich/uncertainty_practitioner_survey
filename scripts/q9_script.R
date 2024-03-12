@@ -38,14 +38,7 @@ theme_plot <- q9_themes %>% mutate(Theme = fct_reorder(Theme, sum, .desc = FALSE
 
 
 
-
-
-
-
-
-
-
-
+# Sankey Figures ----------------------------------------------------------
 
 
 # Libraries
@@ -58,7 +51,7 @@ library(networkD3)
 
 data_long <- read.csv('data/q9_data_sankey.csv')
 
-##### resources #########
+### resources ###
 resources_long <- data_long %>% filter(source == 'Resources') 
 
 # From these flows we need to create a node data frame: it lists every entities involved in the flow

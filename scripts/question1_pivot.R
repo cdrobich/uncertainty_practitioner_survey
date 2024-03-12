@@ -27,8 +27,7 @@ q1_sum %>% mutate(CODE = fct_reorder(CODE, sum, .desc = FALSE)) %>%
             ylab("Count") +
             xlab(" ") 
 
-q1_sum %>% mutate(THEME = fct_reorder(THEME , sum, .desc = FALSE)) %>%
-            ggplot(aes(x = THEME , y = sum)) +
+q1_sum %>%  ggplot(aes(x = THEME , y = sum)) +
             geom_segment(aes(x = THEME , xend = THEME , y = 0, yend = sum),
                          lwd = 2) +
             theme_light() +
@@ -137,7 +136,7 @@ q1_bar <- q1_long %>%
             theme_minimal() +
             theme(axis.text = element_text(size = 16),
                   axis.title = element_text(size = 16),
-                  legend.position = c(0.8, 0.15),
+                  legend.position = "none",
                   legend.key.size = unit(0.7, 'cm'),
                   legend.text = element_text(size = 10),
                   legend.direction = "horizontal",
@@ -187,7 +186,7 @@ ggsave("output/q1_bar.jpeg",
        width = 10,
        height = 14)
 
-
+# c(0.8, 0.15)
 
 # Each Rank ---------------------------------------------------------------
 colours = c("RANK1" = "#264653",
@@ -741,7 +740,7 @@ theme_bar <- theme_long %>%
                   legend.text = element_text(size = 10),
                   legend.direction = "horizontal",
                   legend.title = element_blank(),
-                  legend.position = 'bottom') +
+                  legend.position = "none") +
             scale_fill_manual(values = colours) +
             scale_x_discrete(labels = c('Other',
                                         'Ecological_complexity' = 'Ecological Complexity',
@@ -778,14 +777,15 @@ resources_long$rank <- factor(resources_long$rank, levels = c('RANK5',
                                                 'RANK3',
                                                 'RANK2',
                                                 'RANK1'))
+unique(resources_long$CODE)
 
 resources <- resources_long %>% 
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE,
                                   level = c('EXPERTISE',
-                                            'TIMELINES',
+                                            'TIMELINE',
                                             'PERSONNEL',
-                                            'RESOURCES_CAPACITY',
+                                            'RESOURCESCAPACITY',
                                             'FUNDING')))) + 
             geom_bar(position = "stack", stat = "identity") +
             theme_light() +
@@ -798,9 +798,9 @@ resources <- resources_long %>%
             ylim(0, 80) + 
             scale_fill_manual(values = colours) +
             scale_x_discrete(labels = c('EXPERTISE' = "Expertise",
-                                        'TIMELINES' = "Timelines",
+                                        'TIMELINE' = "Timelines",
                                         'PERSONNEL' = 'Personnel',
-                                        'RESOURCES_CAPACITY' = 'Resources/Capacity',
+                                        'RESOURCESCAPACITY' = 'Resources/Capacity',
                                         'FUNDING' = 'Funding')) +
             ggtitle('Resources')
 
@@ -829,11 +829,11 @@ unique(data_long$CODE)
 data <- data_long %>% 
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE,
-                                  level = c('SITE_INFO',
-                                            'LONGTERM_DATA',
-                                            'IMPACT_INFO',
+                                  level = c('SITE',
+                                            'LONGTERM',
+                                            'IMPACT',
                                             'METHODS',
-                                            'SPECIES_DATA',
+                                            'SPECIES',
                                             'DATA')))) + 
             geom_bar(position = "stack", stat = "identity") +
             theme_light() +
@@ -845,11 +845,11 @@ data <- data_long %>%
             ylab("Count") +
             xlab(" ") +
             scale_fill_manual(values = colours) +
-            scale_x_discrete(labels = c('SITE_INFO' = 'Site',
-                                        'LONGTERM_DATA' = 'Longterm',
-                                        'IMPACT_INFO' = 'Impact',
+            scale_x_discrete(labels = c('SITE' = 'Site',
+                                        'LONGTERM' = 'Longterm',
+                                        'IMPACT' = 'Impact',
                                         'METHODS' = 'Methods',
-                                        'SPECIES_DATA' = 'Species',
+                                        'SPECIES' = 'Species',
                                         'DATA' = 'Data')) +
             ggtitle('Data')
 
@@ -878,12 +878,12 @@ evidence <- evidence_long %>%
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE,
                                   level = c('CONSENSUS',
-                                            'ACCESS_TO_EVIDENCE',
-                                            'CUMULATIVE_IMPACTS',
+                                            'ACCESS',
+                                            'CUMULATIVE',
                                             'SCIENCE',
                                             'PREDICTION',
                                             'IMPLEMENTATION',
-                                            'SUCCESS_CRITERIA')))) + 
+                                            'SUCCESS')))) + 
             geom_bar(position = "stack", stat = "identity") +
             theme_light() +
             coord_flip() +
@@ -895,12 +895,12 @@ evidence <- evidence_long %>%
             xlab(" ") +
             scale_fill_manual(values = colours) +
             scale_x_discrete(labels = c('CONSENSUS' = 'Consensus',
-                                        'ACCESS_TO_EVIDENCE' = ' Access',
-                                        'CUMULATIVE_IMPACTS' = 'Cumulative',
+                                        'ACCESS' = ' Access',
+                                        'CUMULATIVE' = 'Cumulative',
                                         'SCIENCE' = 'Science',
                                         'PREDICTION' = 'Prediction',
                                         'IMPLEMENTATION' = 'Implementation',
-                                        'SUCCESS_CRITERIA' = 'Success criteria')) +
+                                        'SUCCESS' = 'Success criteria')) +
             ggtitle("Evidence")
 
 
@@ -915,8 +915,10 @@ governance_long <- q1 %>% filter(THEME == "Governance") %>%
 governance_long$rank <- factor(governance_long$rank, levels = c('RANK5',
                                                             'RANK4',
                                                             'RANK3',
-                                                            'RANK2',
-                                                            'RANK1'))
+                                                            'RANK2', 'RANK1'))
+
+unique(governance_long$CODE)
+
 governance <- governance_long %>% 
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE))) + 
@@ -932,8 +934,8 @@ governance <- governance_long %>%
             scale_fill_manual(values = colours) +
             scale_x_discrete(labels = c('POLITICS' = 'Politics',
                                         'LEGISLATION' = 'Legislation',
-                                        'INTERNAL_SUPPORT' = 'Internal Support',
-                                        'INDIGENOUS_RIGHTS' = 'Indigenous Rights')) +
+                                        'INTERNALSUPPORT' = 'Internal Support',
+                                        'INDIGENOUS' = 'Indigenous Rights')) +
             ggtitle("Governance")
 
 # Ecological complexity ---------------------------------------------------
@@ -949,12 +951,16 @@ ecological_long$rank <- factor(ecological_long$rank, levels = c('RANK5',
                                                                 'RANK3',
                                                                 'RANK2',
                                                                 'RANK1'))
+
+
+unique(ecological_long$CODE)
+
 ecological <- ecological_long %>% 
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE,
                                   level = c('ECOLOGY',
                                             'NATURE',
-                                            'CLIMATE_CHANGE')))) + 
+                                            'CLIMATECHANGE')))) + 
             geom_bar(position = "stack", stat = "identity") +
             theme_light() +
             coord_flip() +
@@ -967,7 +973,7 @@ ecological <- ecological_long %>%
             scale_fill_manual(values = colours) +
             scale_x_discrete(labels = c('ECOLOGY' = 'Ecology',
                                         'NATURE' = 'Nature',
-                                        'CLIMATE_CHANGE' = 'Climate change')) +
+                                        'CLIMATECHANGE' = 'Climate change')) +
             ggtitle("Ecological Complexity")
 
 
@@ -984,15 +990,20 @@ social_long$rank <- factor(social_long$rank, levels = c('RANK5',
                                                                 'RANK3',
                                                                 'RANK2',
                                                                 'RANK1'))
+
+
+
+unique(social_long$CODE)
+
 social <- social_long %>% 
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE,
                                   level = c('COSTS',
                                             'JUSTICE',
                                             'RESPONSIBILITIES',
-                                            'SOCPOLSCI_SYSTEMS',
+                                            'SYSTEMS',
                                             'TRADEOFFS',
-                                            'COMMUNICATION_COLLABORATION')))) + 
+                                            'COMMCOLLAB')))) + 
             geom_bar(position = "stack", stat = "identity") +
             theme_light() +
             coord_flip() +
@@ -1006,9 +1017,9 @@ social <- social_long %>%
             scale_x_discrete(labels = c('COSTS' = 'Costs',
                                         'JUSTICE' = 'Justice',
                                         'RESPONSIBILITIES' = 'Responsibilities',
-                                        'SOCPOLSCI_SYSTEMS' = 'System',
+                                        'SYSTEMS' = 'System',
                                         'TRADEOFFS' = 'Tradeoffs',
-                                        'COMMUNICATION_COLLABORATION' = 'Communication/Collaboration')) +
+                                        'COMMCOLLAB' = 'Communication/Collaboration')) +
             ggtitle("Social Complexity")
 
 # Public support  ---------------------------------------------------
@@ -1024,11 +1035,13 @@ public_long$rank <- factor(public_long$rank, levels = c('RANK5',
                                                         'RANK3',
                                                         'RANK2',
                                                         'RANK1'))
+unique(public_long$CODE)
+
 public <- public_long %>% 
             ggplot(aes(y = count, fill = rank,
                        x = factor(CODE,
-                                  level = c( 'LAND_ACCESS',
-                                             'EXTERNAL_SUPPORT')))) + 
+                                  level = c( 'LANDACCESS',
+                                             'EXTERNALSUPPORT')))) + 
             geom_bar(position = "stack", stat = "identity") +
             theme_light() +
             coord_flip() +
@@ -1039,8 +1052,8 @@ public <- public_long %>%
             xlab(" ") +
             ylim(0, 80) + 
             scale_fill_manual(values = colours) +
-            scale_x_discrete(labels = c('LAND_ACCESS' = 'Land access',
-                                         'EXTERNAL_SUPPORT' = 'External support')) +
+            scale_x_discrete(labels = c('LANDACCESS' = 'Land access',
+                                         'EXTERNALSUPPORT' = 'External support')) +
             ggtitle('Public Support')
 
 # Panel  ------------------------------------------------------------------
