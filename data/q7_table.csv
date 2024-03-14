@@ -1,5 +1,5 @@
 Question,Always,Most of the time,About half the time,Sometimes,Never
-long-term decisions,37,55,25,25,2
-short-term decisions,17,34,34,56,3
-outside my organization,23,44,48,28,1
-within my organization,15,27,26,64,12
+Long-term decisions (> 3 yrs),37,55,25,25,2
+Short-term decisions (<= 3 yrs),17,34,34,56,3
+Decisions with people outside my organization,23,44,48,28,1
+Decisions with people within my organization,15,27,26,64,12
