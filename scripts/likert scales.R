@@ -1,8 +1,13 @@
-library(likert)
+library(likert) # likert figures
 library(tidyverse)
-library(stringr)
+library(stringr) # wrap labels
+library(scales)
 library(viridis)
 library(patchwork)
+
+# all data
+
+survey_data <- read.csv('data/survey_likerts.csv')
 
 # data with column names as codes
 likert_often <- read.csv("data/often.csv")
@@ -189,3 +194,81 @@ likert_plot
 
 ggsave('output/likert_often_impact.jpg', likert_plot)
 ggsave('output/likert_often_impact.tiff', likert_plot)
+
+
+# Collaborative questions -------------------------------------------------
+# survey question "in my prof capacity, I experience uncertainty when" 
+
+q7 <- read.csv("data/q7_table.csv")
+
+colnames(q7)
+
+q7_long <- q7 %>% pivot_longer(Always:Never,
+                                            names_to = "ranking",
+                                            values_to = "count")
+
+
+q7_sum <- q7_long %>% 
+  group_by(Question) %>% 
+  mutate(Sum = sum(count)) %>% 
+  group_by(ranking) %>% 
+  mutate(percent = round(100*count/Sum, 2))
+
+
+unique(q7_sum$ranking)
+
+q7_sum$ranking <- factor(q7_sum$ranking,
+                             levels = c("Never",
+                                        "Sometimes",
+                                        "About.half.the.time",
+                                        "Most.of.the.time",
+                                        "Always"))
+
+
+# q7 figures
+q7_sum$ranking <- recode_factor(q7_sum$ranking,
+                                   'Most.of.the.time' = 'Most of the time',
+                                   'About.half.the.time' = 'About half the time')
+
+q7_sum$ranking <- factor(q7_sum$ranking, levels = c('Always',
+                                                          'Most of the time',
+                                                          'About half the time',
+                                                          'Sometimes',
+                                                          'Never'))
+
+
+write.csv(q7_sum, 'data/q7_sum_long.csv') # export data for re-creating figure later
+
+
+unique(q7_sum$Question)
+colnames(q7_sum)
+
+
+q7_plot <- ggplot(data = q7_sum, aes(x = factor(Question,
+                                                level = c('outside my organization',
+                                                          'within my organization',
+                                                          'long-term decisions',
+                                                          'short-term decisions')),
+                                     y = percent, fill = ranking)) +
+  geom_bar(stat="identity", width = 0.7) +
+  theme_classic() +
+  coord_flip() +
+  ylab("Percentage (%)") +
+  xlab(" ") +
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=14),
+        legend.text = element_text(size=12),
+        legend.title = element_blank()) +
+  ggtitle("I experience uncertainty when making") +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  scale_fill_manual(values = colours) +
+  scale_x_discrete(labels = c( 'long-term decisions' = 'Long-term decisions (> 3 yrs)',
+                               'short-term decisions' = 'Short-term decisions (<= 3 yrs)',
+                               'outside my organization' = 'Decisions with people outside my organization',
+                               'within my organization' = 'Decisions with people within my organization'))
+
+
+ggsave('output/q7_plot.jpg')
+ggsave('output/q7_plot.tiff',
+       height = 6.52,
+       length = 12.8)
