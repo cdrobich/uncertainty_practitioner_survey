@@ -1,5 +1,54 @@
+# Session Info ------------------------------------------------------------
+
+sessionInfo()
+
+# R version 4.3.0 (2023-04-21 ucrt)
+# Platform: x86_64-w64-mingw32/x64 (64-bit)
+# Running under: Windows 11 x64 (build 22631)
+# 
+# Matrix products: default
+# 
+# 
+# locale:
+#   [1] LC_COLLATE=English_Canada.utf8  LC_CTYPE=English_Canada.utf8   
+# [3] LC_MONETARY=English_Canada.utf8 LC_NUMERIC=C                   
+# [5] LC_TIME=English_Canada.utf8    
+# 
+# time zone: America/New_York
+# tzcode source: internal
+# 
+# attached base packages:
+#   [1] stats     graphics  grDevices utils     datasets  methods   base     
+# 
+# other attached packages:
+#   [1] patchwork_1.2.0   viridis_0.6.5     viridisLite_0.4.2 scales_1.3.0     
+# [5] likert_1.3.5      xtable_1.8-4      lubridate_1.9.3   forcats_1.0.0    
+# [9] stringr_1.5.1     dplyr_1.1.2       purrr_1.0.2       readr_2.1.5      
+# [13] tidyr_1.3.1       tibble_3.2.1      ggplot2_3.5.0     tidyverse_2.0.0  
+# 
+# loaded via a namespace (and not attached):
+#   [1] utf8_1.2.3        generics_0.1.3    stringi_1.8.3     lattice_0.22-5   
+# [5] hms_1.1.3         magrittr_2.0.3    grid_4.3.0        timechange_0.3.0 
+# [9] plyr_1.8.9        gridExtra_2.3     fansi_1.0.4       textshaping_0.3.7
+# [13] mnormt_2.1.1      cli_3.6.1         rlang_1.1.3       munsell_0.5.0    
+# [17] withr_3.0.0       tools_4.3.0       parallel_4.3.0    reshape2_1.4.4   
+# [21] tzdb_0.4.0        colorspace_2.1-0  vctrs_0.6.5       R6_2.5.1         
+# [25] lifecycle_1.0.4   psych_2.4.3       ragg_1.3.0        pkgconfig_2.0.3  
+# [29] pillar_1.9.0      gtable_0.3.4      glue_1.6.2        Rcpp_1.0.12      
+# [33] systemfonts_1.0.6 tidyselect_1.2.1  rstudioapi_0.15.0 farver_2.1.1     
+# [37] nlme_3.1-164      labeling_0.4.3    compiler_4.3.0   
+
+
+# Libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(scales) # label wrap
+library(viridis)
+library(patchwork)
+library(hrbrthemes)
+
+
+# Solutions (Q9) data -----------------------------------------------------
 
 q9 <- read.csv("data/q9_data_cleaned.csv")
 q9
@@ -15,6 +64,8 @@ q9_themes <- q9 %>% group_by(Theme) %>%
 # 5 priorities            45
 # 6 quality_governance    40
 # 7 use_data_evidence     35
+
+# quick look at data
 
 theme_plot <- q9_themes %>% mutate(Theme = fct_reorder(Theme, sum, .desc = FALSE)) %>%
             ggplot(aes(x = Theme, y = sum, fill = Theme)) +
@@ -38,45 +89,18 @@ theme_plot <- q9_themes %>% mutate(Theme = fct_reorder(Theme, sum, .desc = FALSE
 
 
 
-# Sankey Figures ----------------------------------------------------------
-
-
-# Libraries
-library(viridis)
-library(patchwork)
-library(hrbrthemes)
-library(circlize)
-
-library(networkD3)
-
+# Figure ----------------------------------------------------------
+# break down results by overall theme
+# organized long version of data
 data_long <- read.csv('data/q9_data_sankey.csv')
 
-### resources ###
+### resources ####
 resources_long <- data_long %>% filter(source == 'Resources') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(resources_long$source), as.character(resources_long$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-resources_long$IDsource=match(resources_long$source, nodes$name)-1 
-resources_long$IDtarget=match(resources_long$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#FDE725FF","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-resources_sankey <- sankeyNetwork(Links = resources_long, Nodes = nodes,
-              Source = "IDsource", Target = "IDtarget",
-              Value = "value", NodeID = "name", 
-              sinksRight=FALSE, colourScale=ColourScal,
-              nodeWidth=40, fontSize=16, nodePadding=20,
-              fontFamily = 'Arial')
-
-
-#### resources bar chart
-
-resourcse_bar <- resources_long %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+resources_bar <- resources_long %>% 
+  ggplot(aes(x = reorder(target, +value), y = value)) + 
+            geom_bar(position = "stack", stat = "identity",
+                     fill = '#569DA9') +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -87,34 +111,14 @@ resourcse_bar <- resources_long %>% ggplot(aes(x = reorder(target, +value), y = 
             ggtitle('Resources')
 
 
-##### data_evidence ####
+##### data and evidence ####
 
 dat_evidence <- data_long %>% filter(source == 'Data and Evidence') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(dat_evidence$source),
-                           as.character(dat_evidence$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-dat_evidence$IDsource=match(dat_evidence$source, nodes$name)-1 
-dat_evidence$IDtarget=match(dat_evidence$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#35b779","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-datev_sankey <- sankeyNetwork(Links = dat_evidence, Nodes = nodes,
-                                  Source = "IDsource", Target = "IDtarget",
-                                  Value = "value", NodeID = "name", 
-                                  sinksRight=FALSE, colourScale=ColourScal,
-                                  nodeWidth=40, fontSize=16, nodePadding=20,
-                                  fontFamily = 'Arial')
-
-
-#### data ev barchart #####
-
-data_bar <- dat_evidence %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+data_bar <- dat_evidence %>% 
+  ggplot(aes(x = reorder(target, +value), y = value)) + 
+            geom_bar(position = "stack", stat = "identity",
+                     fill = '#145277') +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -129,29 +133,8 @@ data_bar <- dat_evidence %>% ggplot(aes(x = reorder(target, +value), y = value))
 
 governance <- data_long %>% filter(source == 'Quality of Governance Process') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(governance$source),
-                           as.character(governance$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-governance$IDsource=match(governance$source, nodes$name)-1 
-governance$IDtarget=match(governance$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#21918c","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-gov_sankey <- sankeyNetwork(Links = governance, Nodes = nodes,
-                              Source = "IDsource", Target = "IDtarget",
-                              Value = "value", NodeID = "name", 
-                              sinksRight=FALSE, colourScale=ColourScal,
-                              nodeWidth=40, fontSize=16, nodePadding=20,
-                              fontFamily = 'Arial')
-
-
-
 gov_bar <- governance %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+            geom_bar(position = "stack", stat = "identity", fill = '#408498') +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -163,34 +146,12 @@ gov_bar <- governance %>% ggplot(aes(x = reorder(target, +value), y = value)) +
 
 
 
-#### use_data ####
+#### use of data and evidence ####
 
 use_data <- data_long %>% filter(source == 'Use of Data and Evidence') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(use_data$source),
-                           as.character(use_data$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-use_data$IDsource=match(use_data$source, nodes$name)-1 
-use_data$IDtarget=match(use_data$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#443983","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-
-use_sankey <- sankeyNetwork(Links = use_data, Nodes = nodes,
-                            Source = "IDsource", Target = "IDtarget",
-                            Value = "value", NodeID = "name", 
-                            sinksRight=FALSE, colourScale=ColourScal,
-                            nodeWidth=40, fontSize=16, nodePadding=20,
-                            fontFamily = 'Arial')
-
-##### data use barchart ###
-
 use_bar <- use_data %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+            geom_bar(position = "stack", stat = "identity", fill = '#83D0CB') +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -205,32 +166,8 @@ use_bar <- use_data %>% ggplot(aes(x = reorder(target, +value), y = value)) +
 
 prioties <- data_long %>% filter(source == 'Priorities') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(prioties$source),
-                           as.character(prioties$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-prioties$IDsource=match(prioties$source, nodes$name)-1 
-prioties$IDtarget=match(prioties$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#90d743","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-
-priorities_sank <- sankeyNetwork(Links = prioties, Nodes = nodes,
-                            Source = "IDsource", Target = "IDtarget",
-                            Value = "value", NodeID = "name", 
-                            sinksRight=FALSE, colourScale=ColourScal,
-                            nodeWidth=40, fontSize=16, nodePadding=20,
-                            fontFamily = 'Arial')
-
-
-
-# priorities barchart
-
 priority_bar <- prioties %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+            geom_bar(position = "stack", stat = "identity", fill = '#6CB6BA') +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -246,30 +183,8 @@ priority_bar <- prioties %>% ggplot(aes(x = reorder(target, +value), y = value))
 
 collab <- data_long %>% filter(source == 'Collaboration and Engagement') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(collab$source),
-                           as.character(collab$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-collab$IDsource=match(collab$source, nodes$name)-1 
-collab$IDtarget=match(collab$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#31688e","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-
-collab_sankey <- sankeyNetwork(Links = collab, Nodes = nodes,
-                            Source = "IDsource", Target = "IDtarget",
-                            Value = "value", NodeID = "name", 
-                            sinksRight=FALSE, colourScale=ColourScal,
-                            nodeWidth=40, fontSize=16, nodePadding=20,
-                            fontFamily = 'Arial')
-
-# collab barchart
-
 collab_bar <- collab %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+            geom_bar(position = "stack", stat = "identity", fill = "#2A6B87") +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -281,34 +196,12 @@ collab_bar <- collab %>% ggplot(aes(x = reorder(target, +value), y = value)) +
 
 
 
-
 #### External Factors ####
 
 external <- data_long %>% filter(source == 'External Factors') 
 
-# From these flows we need to create a node data frame: it lists every entities involved in the flow
-nodes <- data.frame(name=c(as.character(external$source),
-                           as.character(external$target)) %>% unique())
-
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
-external$IDsource=match(external$source, nodes$name)-1 
-external$IDtarget=match(external$target, nodes$name)-1
-
-# prepare colour scale
-ColourScal ='d3.scaleOrdinal() .range(["#440154","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
-
-# Make the Network
-external_sankey <- sankeyNetwork(Links = external, Nodes = nodes,
-                               Source = "IDsource", Target = "IDtarget",
-                               Value = "value", NodeID = "name", 
-                               sinksRight=FALSE, colourScale=ColourScal,
-                               nodeWidth=40, fontSize=16, nodePadding=20,
-                               fontFamily = 'Arial')
-
-# external chart
-
 ext_bar <- external %>% ggplot(aes(x = reorder(target, +value), y = value)) + 
-            geom_bar(position = "stack", stat = "identity") +
+            geom_bar(position = "stack", stat = "identity", fill = '#E76F51') +
             theme_light() +
             coord_flip() +
             theme_minimal() +
@@ -318,16 +211,18 @@ ext_bar <- external %>% ggplot(aes(x = reorder(target, +value), y = value)) +
             xlab(" ")  
 
 ######## panel ############
-library(patchwork)
-
-
 theme_plot 
 
-panel <- data_bar + resourcse_bar + 
-            collab_bar + priority_bar + 
-             gov_bar + 
-            use_bar 
+panel <- data_bar + resources_bar + 
+  collab_bar + priority_bar + 
+  gov_bar + use_bar + 
+  plot_layout(ncol = 2)
 
-ggsave('output/q9_themes_panel.png',
-       width = 15,
-       height = 10)  
+ggsave('output/q9_themes_panel.jpg',
+       width = 16,
+       height = 15)  
+
+ggsave('output/q9_themes_panel.tiff',
+       width = 16,
+       height = 15,
+       dpi = 300) 
