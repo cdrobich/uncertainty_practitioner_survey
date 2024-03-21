@@ -1,36 +1,36 @@
-"","Impact","ranking","count"
-"1","The environment","Strongly.agree",26
-"2","The environment","Agree",74
-"3","The environment","Neither.agree.nor.disagree",28
-"4","The environment","Disagree",11
-"5","The environment","Strongly.disagree",4
-"6","Evidence","Strongly.agree",36
-"7","Evidence","Agree",74
-"8","Evidence","Neither.agree.nor.disagree",25
-"9","Evidence","Disagree",7
-"10","Evidence","Strongly.disagree",1
-"11","Teammates and/or colleagues","Strongly.agree",11
-"12","Teammates and/or colleagues","Agree",59
-"13","Teammates and/or colleagues","Neither.agree.nor.disagree",46
-"14","Teammates and/or colleagues","Disagree",23
-"15","Teammates and/or colleagues","Strongly.disagree",4
-"16","Agency or organization leaders","Strongly.agree",32
-"17","Agency or organization leaders","Agree",64
-"18","Agency or organization leaders","Neither.agree.nor.disagree",30
-"19","Agency or organization leaders","Disagree",16
-"20","Agency or organization leaders","Strongly.disagree",1
-"21","Elected leaders","Strongly.agree",55
-"22","Elected leaders","Agree",57
-"23","Elected leaders","Neither.agree.nor.disagree",22
-"24","Elected leaders","Disagree",8
-"25","Elected leaders","Strongly.disagree",1
-"26","Stakeholders or rightsholders","Strongly.agree",28
-"27","Stakeholders or rightsholders","Agree",68
-"28","Stakeholders or rightsholders","Neither.agree.nor.disagree",37
-"29","Stakeholders or rightsholders","Disagree",10
-"30","Stakeholders or rightsholders","Strongly.disagree",NA
-"31","Funding","Strongly.agree",59
-"32","Funding","Agree",52
-"33","Funding","Neither.agree.nor.disagree",22
-"34","Funding","Disagree",7
-"35","Funding","Strongly.disagree",3
+"Question","ranking","count"
+"The environment","Strongly.agree",28
+"The environment","Agree",81
+"The environment","Neither.agree.nor.disagree",29
+"The environment","Disagree",11
+"The environment","Strongly.disagree",4
+"Evidence","Strongly.agree",38
+"Evidence","Agree",81
+"Evidence","Neither.agree.nor.disagree",26
+"Evidence","Disagree",7
+"Evidence","Strongly.disagree",1
+"Teammates and/or colleagues","Strongly.agree",13
+"Teammates and/or colleagues","Agree",65
+"Teammates and/or colleagues","Neither.agree.nor.disagree",48
+"Teammates and/or colleagues","Disagree",23
+"Teammates and/or colleagues","Strongly.disagree",4
+"Agency or organization leaders","Strongly.agree",36
+"Agency or organization leaders","Agree",69
+"Agency or organization leaders","Neither.agree.nor.disagree",31
+"Agency or organization leaders","Disagree",16
+"Agency or organization leaders","Strongly.disagree",1
+"Elected leaders","Strongly.agree",59
+"Elected leaders","Agree",62
+"Elected leaders","Neither.agree.nor.disagree",23
+"Elected leaders","Disagree",8
+"Elected leaders","Strongly.disagree",1
+"Stakeholders or rightsholders","Strongly.agree",32
+"Stakeholders or rightsholders","Agree",71
+"Stakeholders or rightsholders","Neither.agree.nor.disagree",40
+"Stakeholders or rightsholders","Disagree",10
+"Stakeholders or rightsholders","Strongly.disagree",0
+"Funding","Strongly.agree",67
+"Funding","Agree",54
+"Funding","Neither.agree.nor.disagree",22
+"Funding","Disagree",7
+"Funding","Strongly.disagree",3

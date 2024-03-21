@@ -1,21 +1,21 @@
 "Question","ranking","count","Sum","percent"
-"Long-term decisions (> 3 yrs)","Always",37,144,25.69
-"Long-term decisions (> 3 yrs)","Most of the time",55,144,38.19
-"Long-term decisions (> 3 yrs)","About half the time",25,144,17.36
-"Long-term decisions (> 3 yrs)","Sometimes",25,144,17.36
-"Long-term decisions (> 3 yrs)","Never",2,144,1.39
-"Short-term decisions (<= 3 yrs)","Always",17,144,11.81
-"Short-term decisions (<= 3 yrs)","Most of the time",34,144,23.61
-"Short-term decisions (<= 3 yrs)","About half the time",34,144,23.61
-"Short-term decisions (<= 3 yrs)","Sometimes",56,144,38.89
-"Short-term decisions (<= 3 yrs)","Never",3,144,2.08
-"Decisions with people outside my organization","Always",23,144,15.97
-"Decisions with people outside my organization","Most of the time",44,144,30.56
-"Decisions with people outside my organization","About half the time",48,144,33.33
-"Decisions with people outside my organization","Sometimes",28,144,19.44
-"Decisions with people outside my organization","Never",1,144,0.69
-"Decisions with people within my organization","Always",15,144,10.42
-"Decisions with people within my organization","Most of the time",27,144,18.75
-"Decisions with people within my organization","About half the time",26,144,18.06
-"Decisions with people within my organization","Sometimes",64,144,44.44
-"Decisions with people within my organization","Never",12,144,8.33
+"Long-term decisions (> 3 yrs)","Always",43,154,27.92
+"Long-term decisions (> 3 yrs)","Most of the time",58,154,37.66
+"Long-term decisions (> 3 yrs)","About half the time",25,154,16.23
+"Long-term decisions (> 3 yrs)","Sometimes",26,154,16.88
+"Long-term decisions (> 3 yrs)","Never",2,154,1.3
+"Short-term decisions (<= 3 yrs)","Always",17,154,11.04
+"Short-term decisions (<= 3 yrs)","Most of the time",37,154,24.03
+"Short-term decisions (<= 3 yrs)","About half the time",39,154,25.32
+"Short-term decisions (<= 3 yrs)","Sometimes",58,154,37.66
+"Short-term decisions (<= 3 yrs)","Never",3,154,1.95
+"Decisions with people outside my organization","Always",24,154,15.58
+"Decisions with people outside my organization","Most of the time",49,154,31.82
+"Decisions with people outside my organization","About half the time",51,154,33.12
+"Decisions with people outside my organization","Sometimes",29,154,18.83
+"Decisions with people outside my organization","Never",1,154,0.65
+"Decisions with people within my organization","Always",16,154,10.39
+"Decisions with people within my organization","Most of the time",30,154,19.48
+"Decisions with people within my organization","About half the time",27,154,17.53
+"Decisions with people within my organization","Sometimes",69,154,44.81
+"Decisions with people within my organization","Never",12,154,7.79
