@@ -11,4 +11,6 @@
 - `uncertainty_data_cleaned` - all of the survey data
 - `location` - where respondents are located
 - `collaborative_within` - cross tabs of organization/how collaborative within
-- `question1_28jun23` - recoded Q1 using updated codes 
+- `question1_28jun23` - recoded Q1 using updated codes
+
+- `qualtrics output` represents all the data directly output from Qualtrics (English and French) and combined. Should be error-free for all the non-open ended questions

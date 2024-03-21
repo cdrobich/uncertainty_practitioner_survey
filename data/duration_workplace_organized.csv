@@ -1,0 +1,31 @@
+"","organization","duration","n"
+"1","Federal Government","> 10 years",15
+"2","Federal Government","< 1 year",2
+"3","Federal Government","1 - 2 years",3
+"4","Federal Government","3 - 5 years",6
+"5","Federal Government","5 - 10 years",4
+"6","Provincial/Territorial Government","> 10 years",21
+"7","Provincial/Territorial Government","1 - 2 years",2
+"8","Provincial/Territorial Government","3 - 5 years",4
+"9","Provincial/Territorial Government","5 - 10 years",4
+"10","Conservation authority","> 10 years",4
+"11","Conservation authority","< 1 year",3
+"12","Conservation authority","1 - 2 years",4
+"13","Conservation authority","3 - 5 years",4
+"14","Conservation authority","5 - 10 years",7
+"15","Indigenous government","5 - 10 years",1
+"16","Industry/private company","> 10 years",3
+"17","Industry/private company","< 1 year",2
+"18","Industry/private company","1 - 2 years",1
+"19","Industry/private company","3 - 5 years",1
+"20","Industry/private company","5 - 10 years",2
+"21","Municipal agency","< 1 year",1
+"22","Municipal agency","1 - 2 years",1
+"23","Non-government Agency","> 10 years",14
+"24","Non-government Agency","< 1 year",3
+"25","Non-government Agency","1 - 2 years",6
+"26","Non-government Agency","3 - 5 years",11
+"27","Non-government Agency","5 - 10 years",12
+"28","Other","> 10 years",5
+"29","Other","< 1 year",1
+"30","Other","1 - 2 years",1

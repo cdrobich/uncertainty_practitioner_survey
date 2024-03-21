@@ -1,103 +1,79 @@
-library(tidyverse)
+
+# Session Info ------------------------------------------------------------
+sessionInfo()
+# R version 4.3.0 (2023-04-21 ucrt)
+# Platform: x86_64-w64-mingw32/x64 (64-bit)
+# Running under: Windows 11 x64 (build 22631)
+# 
+# Matrix products: default
+# 
+# 
+# locale:
+#   [1] LC_COLLATE=English_Canada.utf8  LC_CTYPE=English_Canada.utf8    LC_MONETARY=English_Canada.utf8
+# [4] LC_NUMERIC=C                    LC_TIME=English_Canada.utf8    
+# 
+# time zone: America/New_York
+# tzcode source: internal
+# 
+# attached base packages:
+#   [1] stats     graphics  grDevices utils     datasets  methods   base     
+# 
+# other attached packages:
+#   [1] patchwork_1.1.2   viridis_0.6.3     viridisLite_0.4.2 lubridate_1.9.2   forcats_1.0.0    
+# [6] stringr_1.5.0     dplyr_1.1.2       purrr_1.0.1       readr_2.1.4       tidyr_1.3.0      
+# [11] tibble_3.2.1      ggplot2_3.5.0     tidyverse_2.0.0  
+# 
+# loaded via a namespace (and not attached):
+#   [1] gtable_0.3.4     compiler_4.3.0   tidyselect_1.2.0 gridExtra_2.3    scales_1.3.0    
+# [6] R6_2.5.1         labeling_0.4.3   generics_0.1.3   munsell_0.5.0    pillar_1.9.0    
+# [11] tzdb_0.4.0       rlang_1.1.1      utf8_1.2.3       stringi_1.7.12   timechange_0.2.0
+# [16] cli_3.6.1        withr_2.5.1      magrittr_2.0.3   grid_4.3.0       rstudioapi_0.14 
+# [21] hms_1.1.3        lifecycle_1.0.3  vctrs_0.6.2      glue_1.6.2       farver_2.1.1    
+# [26] fansi_1.0.4      colorspace_2.1-0 tools_4.3.0      pkgconfig_2.0.3
+
+# libraries -----------------------------------------------
+
+library(dplyr)
+library(ggplot2)
+library(forcats)
 library(viridis)
 library(stringr)
 library(patchwork)
+library(cowplot)
 
 
-data <- read.csv("data/survey_likerts.csv")
-colnames(data)
-str(data)
+# Location of work --------------------------------------------------------
+# using output directly from Qualtrics (summed English and French surveys)
 
-# converted some 'others' into the proper org 
-data <- data %>% filter(Finished == TRUE)
+organizations <- read.csv("data/qualtrics_output/organization_qualitrics_output.csv")
+str(organizations)
 
-# organization  n
-# 1             Non-government Agency 46
-# 2 Provincial/Territorial Government 29
-# 3                Federal Government 30
-# 4                  Municipal agency  2
-# 5            Conservation authority 21
-# 6                             Other  7
-# 7          Industry/private company  9
-# 8             Indigenous government  1
-
-46+29+30+2+21+7+9+1 #145
-
-
-
-
-data$organization <- recode_factor(data$organization,
+organizations$Organization <- recode_factor(organizations$Organization,
                                    "Non-government agency (e.g., Nature Conservancy Canada, Ducks Unlimited Canada)" = "Non-government Agency",
                                    "Canadian provincial or territorial government agency" = "Provincial/Territorial Government",
                                    "Canadian federal government agency" = "Federal Government")
-unique(data$organization)
-
-
-data %>% count(organization) 
-
-#                        organization  n
-# 1             Non-government Agency 46
-# 2 Provincial/Territorial Government 29
-# 3                Federal Government 30
-# 4                  Municipal agency  2
-# 5            Conservation authority 21
-# 6                             Other  7
-# 7          Industry/private company  9
-# 8             Indigenous government  1
 
 
 
 
+org_colour = c("Non-government Agency" = '#277F8E',
+               'Provincial/Territorial Government' = '#A0DA39',
+               'Federal Government' = '#4AC16D',
+               'Municipal agency' = '#1FA187',
+               'Other' = '#FDE725',
+               'Conservation authority' = '#365C8D',
+               'Industry/private company' = '#46327E',
+               'Indigenous government' = '#440154')
 
+colnames(organizations)
 
-data$duration <- recode_factor(data$duration,
-                               "Over 10 years" = "over 10 years")
-
-
-data$duration <- recode_factor(data$duration,
-                               "over 10 years" = "> 10 years",
-                               "Less than 1 year" = "< 1 year")
-unique(data$duration)
-
-count <- data %>% count(duration)
-
-count %>%  
-          mutate(Sum = sum(n)) %>% 
-          group_by(duration) %>% 
-          mutate(percent = round(100*n/Sum, 2))
-
-# # Groups:   duration [5]
-# duration         n   Sum percent
-
-# 1 > 10 years      61   145   42.1 
-# 2 < 1 year        12   145    8.28
-# 3 1 - 2 years     18   145   12.4 
-# 4 3 - 5 years     25   145   17.2 
-# 5 5 - 10 years    29   145   20
-
-org_colour = c("Non-government Agency" = '#440154',
-               'Provincial/Territorial Government' = '#46327e',
-               'Federal Government' = '#365c8d',
-               'Municipal agency' = '#277f8e',
-               'Other' = '#1fa187',
-               'Conservation authority' = '#4ac16d',
-               'Industry/private company' = '#a0da39',
-               'Indigenous government' = '#fde725')
-
-
-
-orgs <- data %>% count(organization)
-colnames(orgs)
-
-
-
-org_n <- orgs %>% mutate(organization = fct_reorder(organization,
-                                           n, .desc = FALSE)) %>% 
+org_n <- organizations %>% mutate(Organization = fct_reorder(Organization,
+                                           Sum, .desc = FALSE)) %>% 
             ggplot() + 
-            geom_segment(aes(x = organization, xend = organization, 
-                              y = 0, yend = n, 
-                             colour = organization),lwd = 5) +
-  geom_point(aes(x = organization, y = n, colour = organization),
+            geom_segment(aes(x = Organization, xend = Organization, 
+                              y = 0, yend = Sum, 
+                             colour = Organization),lwd = 5) +
+  geom_point(aes(x = Organization, y = Sum, colour = Organization),
              size=7, shape = 19, stroke = 1.5) +
             coord_flip() +
             xlab(" ") +
@@ -114,18 +90,52 @@ org_n <- orgs %>% mutate(organization = fct_reorder(organization,
             scale_colour_manual(values = org_colour)
 
 
+# Duration at workplace ---------------------------------------------------
+duration <- read.csv("data/qualtrics_output/duration_qualtrics_output.csv")
+data <- read.csv("data/survey_likerts.csv")
 
-###### years worked
+duration$Duration <- recode_factor(duration$Duration,
+                                   "over 10 years" = "> 10 years",
+                                   "Less than 1 year" = "< 1 year")
+
+duration <- duration %>% select(Duration,Sum)
+
+# Duration Sum
+# 1     < 1 year  12
+# 2  1 - 2 years  18
+# 3  3 - 5 years  27
+# 4 5 - 10 years  31
+# 5   > 10 years  62
+
+###### years worked x place worked ####
+data$duration <- recode_factor(data$duration,
+                               "Over 10 years" = "over 10 years")
+
+
+data$duration <- recode_factor(data$duration,
+                               "over 10 years" = "> 10 years",
+                               "Less than 1 year" = "< 1 year")
 
 colnames(data)
 
-duration <- data %>% group_by(organization) %>% 
+duration_org <- data %>% group_by(organization) %>% 
             count(duration)
 
-unique(duration$duration)
+duration_org <- duration_org[-1,]
+duration_org <- duration_org[-31,]
+
+duration_org$organization <- recode_factor(duration_org$organization,
+                                            "Non-government agency (e.g., Nature Conservancy Canada, Ducks Unlimited Canada)" = "Non-government Agency",
+                                            "Canadian provincial or territorial government agency" = "Provincial/Territorial Government",
+                                            "Canadian federal government agency" = "Federal Government")
 
 
-duration_n <- duration %>% ggplot(aes(fill = organization, y = n, 
+write.csv(duration_org, "data/duration_workplace_organized.csv")
+
+###### generate duration x workplace figure #####
+duration_org <- read.csv("data/duration_workplace_organized.csv")
+
+duration_n <- duration_org %>% ggplot(aes(fill = organization, y = n, 
                         x = factor(duration,
                                    level = c('< 1 year',
                                              '1 - 2 years',
@@ -147,42 +157,20 @@ duration_n <- duration %>% ggplot(aes(fill = organization, y = n,
                   legend.title = element_blank()) +
             scale_fill_manual(values = org_colour)
 
-### location
 
-location <- data %>% select(location)
+# Location ----------------------------------------------------------------
+location <- read.csv("data/qualtrics_output/location_qualtrics_output.csv")
+location <- location %>% select(Location, Sum)
 
-location <- location %>% separate_longer_delim(location, delim = ",")
-
-loc <- location %>% count(location)
-
-write.csv(loc, "location.csv")
-
-
-loc_colour = c( "Alberta" = '#88C4AA',
-                "British Columbia" = '#B3E0A6',
-                "Manitoba" = '#FED38C',
-                "New Brunswick" = '#D7191C', 
-                "Newfoundland and Labrador" = '#E54F35', 
-                "Northwest Territories" = '#F3854E',
-                "Nova Scotia" = '#FDB56A',
-                "Nunavut" = '#E54F35',
-                "Ontario" = '#5AA4B2',
-                "Prince Edward Island" = '#F3854E',
-                "Quebec" = '#F0F9BA',
-                "Saskatchewan" = '#D1ECB0',
-                "Yukon" = '#FFF0AE')
-
-
-unique(loc$location)
-loc <- loc[-10,]
-
-location_n <- loc %>% mutate(location = fct_reorder(location,
-                                           n, .desc = FALSE)) %>% 
+location_n <- location %>% mutate(Location = fct_reorder(Location,
+                                           Sum, .desc = FALSE)) %>% 
             ggplot() + 
-            geom_segment(aes(x = location, xend = location, 
-                              y = 0, yend = n, colour = location), lwd = 4) +
-            geom_point(aes(x = location, y = n, colour = location), 
-                       fill = "white", size=6, shape = 19, stroke = 1.5) +
+            geom_segment(aes(x = Location, xend = Location, 
+                              y = 0, yend = Sum),
+                         colour = '#36a3ab', lwd = 4) +
+            geom_point(aes(x = Location, y = Sum), 
+                       size=6, shape = 19,
+                       stroke = 1.5, colour = '#36a3ab') +
             coord_flip() +
             xlab(" ") +
             ylab("Number of respondents") +
@@ -194,143 +182,19 @@ location_n <- loc %>% mutate(location = fct_reorder(location,
                   legend.text = element_text(size = 12),
                   #legend.direction = "horizontal",
                   legend.title = element_blank()) +
-            ylim(0, 70) +
-            scale_colour_manual(values = loc_colour)
+            ylim(0, 70) 
 
+
+# put panel together ------------------------------------------------------
 
 
 panel <- org_n + duration_n + location_n + location_n +
-            plot_layout(ncol = 2) +
             plot_annotation(tag_levels = "A")
             
 
-ggsave('output/panel_figures_test.jpg',
+ggsave('output/panel_demographics.jpg',
        width = 14, height = 10)
 
-############ LIKERT ###########
 
-colnames(data)
-
-unique(data$organization)
-
-likert <- data %>% filter(organization %in% org_list)
-
-colours = c("Always" = "#264653",
-            "Most of the time" = "#2A9D8F",
-            "Never" = "#E9C46A",
-            "About half the time" = "#F4A261",
-            "Sometimes" = "#e76F51")
-
-
-likert$collaborative_within <- factor(likert$collaborative_within, levels = c('Never',
-                                                'Sometimes',
-                                                'About half the time',
-                                                'Most of the time',
-                                                'Always'))
-
-
-
-org_list <- c("Conservation authority",
-              "Non-government Agency",
-              "Federal Government",
-              "Industry/private company",
-              "Provincial/Territorial Government")
-
-##### Decision making within my org. is collaborative #####
-collab_within_org <- likert %>% group_by(organization) %>% 
-            count(collaborative_within)
-
-
-collab_within_org <- collab_within_org[-5,]
-
-collab_within_org2 <- read.csv("collaborative_within.csv")
-
-### add a 'never' for each org
-
-collab_within_org %>% ggplot(aes(fill = collaborative_within, y = n, 
-                                 label = n,
-                         x = organization)) + 
-            geom_bar(position = "dodge", stat = "identity") +
-            coord_flip() +
-            xlab(" ") +
-            ylab("Count") +
-            theme_minimal() +
-            theme(axis.text = element_text(size = 15),
-                  axis.title = element_text(size = 15),
-                  legend.position = "none",
-                  legend.key.size = unit(0.5, 'cm'),
-                  legend.text = element_text(size = 12),
-                  #legend.direction = "horizontal",
-                   legend.title = element_blank(),
-                  plot.title = element_text(size = 15, face = "bold")) +
-            scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-            scale_fill_manual(values = colours) +
-            guides(fill = guide_legend(reverse = TRUE)) +
-            ggtitle("...collaborative within my organization") +
-            ylim(0,20)
-
-
-collab_outside_org <- likert %>% group_by(organization) %>% 
-            count(collaborative_outside)
-
-collab_outside_org <- collab_outside_org[-5,]
-
-
-
-collab_outside_org$collaborative_outside <- factor(collab_outside_org$collaborative_outside, levels = c('Never',
-                                                                              'Sometimes',
-                                                                              'About half the time',
-                                                                              'Most of the time',
-                                                                              'Always'))
-
-
-
-collab_outside_org %>% ggplot(aes(fill = collaborative_outside, y = n, 
-                                 label = n,
-                                 x = organization)) + 
-            geom_bar(position = "dodge", stat = "identity") +
-            coord_flip() +
-            xlab(" ") +
-            ylab("Count") +
-            theme_minimal() +
-            theme(axis.text = element_text(size = 15),
-                  axis.title = element_text(size = 15),
-                  legend.position = "none",
-                  #legend.key.size = unit(0.5, 'cm'),
-                  legend.text = element_text(size = 12),
-                  legend.title = element_blank(),
-                  plot.title = element_text(size = 15, face = "bold")) +
-            scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-            scale_fill_manual(values = colours) +
-            guides(fill = guide_legend(reverse = TRUE)) +
-            ggtitle("...collaborative outside my organization") +
-            ylim(0, 20)
-
-
-
-# chloropleth map ---------------------------------------------------------
-
-# https://cengel.github.io/R-spatial/mapping.html
-
-library(sf)
-
-canada <- st_read('data/shapefiles/lpr_000b21a_e.shp')
-
-
-class(canada)
-# [1] "sf"         "data.frame"
-
-attr(canada, "sf_column")
-str(canada)
-
-class(canada_sf)
-#[1] "sf"         "tbl_df"     "tbl"        "data.frame"
-
-plot(canada['Respondent'],
-     main = 'Number of Respondents')
-
-heatmap <- ggplot(canada) +
-            geom_sf(aes(fill = Respondent)) +
-            theme_void() +
-            theme(legend.position = "bottom")
-
+ggsave('output/panel_demographics.tiff',
+       width = 14, height = 10)
