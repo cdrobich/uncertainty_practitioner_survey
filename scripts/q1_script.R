@@ -1,3 +1,43 @@
+# Session Info ------------------------------------------------------------
+
+sessionInfo()
+
+# R version 4.3.0 (2023-04-21 ucrt)
+# Platform: x86_64-w64-mingw32/x64 (64-bit)
+# Running under: Windows 11 x64 (build 22631)
+# 
+# Matrix products: default
+# 
+# 
+# locale:
+#   [1] LC_COLLATE=English_Canada.utf8  LC_CTYPE=English_Canada.utf8    LC_MONETARY=English_Canada.utf8
+# [4] LC_NUMERIC=C                    LC_TIME=English_Canada.utf8    
+# 
+# time zone: America/New_York
+# tzcode source: internal
+# 
+# attached base packages:
+#   [1] stats     graphics  grDevices utils     datasets  methods   base     
+# 
+# other attached packages:
+#   [1] ggpubr_0.6.0      fmsb_0.7.6        patchwork_1.2.0   viridis_0.6.5     viridisLite_0.4.2
+# [6] scales_1.3.0      lubridate_1.9.3   forcats_1.0.0     stringr_1.5.1     dplyr_1.1.2      
+# [11] purrr_1.0.2       readr_2.1.5       tidyr_1.3.1       tibble_3.2.1      ggplot2_3.5.0    
+# [16] tidyverse_2.0.0  
+# 
+# loaded via a namespace (and not attached):
+#   [1] utf8_1.2.3        generics_0.1.3    rstatix_0.7.2     stringi_1.8.3     hms_1.1.3        
+# [6] magrittr_2.0.3    grid_4.3.0        timechange_0.3.0  backports_1.4.1   gridExtra_2.3    
+# [11] fansi_1.0.4       textshaping_0.3.7 abind_1.4-5       cli_3.6.1         rlang_1.1.3      
+# [16] munsell_0.5.0     withr_3.0.0       tools_4.3.0       tzdb_0.4.0        ggsignif_0.6.4   
+# [21] colorspace_2.1-0  broom_1.0.5       vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4  
+# [26] car_3.1-2         ragg_1.3.0        pkgconfig_2.0.3   pillar_1.9.0      gtable_0.3.4     
+# [31] glue_1.6.2        systemfonts_1.0.6 tidyselect_1.2.1  rstudioapi_0.15.0 farver_2.1.1     
+# [36] carData_3.0-5     labeling_0.4.3    compiler_4.3.0
+
+
+# Libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(fmsb)
 library(forcats)
@@ -8,11 +48,6 @@ q1 <- read.csv("data/question1_28jun23.csv")
 
 q1_sum <- q1
 q1_sum$sum <- rowSums(q1[,3:7])
-
-str(q1)
-
-colnames(q1)
-str(q1) 
 
 #### Summed Total #####
 q1_sum %>% mutate(CODE = fct_reorder(CODE, sum, .desc = FALSE)) %>%
@@ -27,7 +62,8 @@ q1_sum %>% mutate(CODE = fct_reorder(CODE, sum, .desc = FALSE)) %>%
             ylab("Count") +
             xlab(" ") 
 
-q1_sum %>%  ggplot(aes(x = THEME , y = sum)) +
+q1_sum %>%  mutate(THEME = fct_reorder(THEME, sum, .desc = TRUE)) %>% 
+  ggplot(aes(x = THEME , y = sum)) +
             geom_segment(aes(x = THEME , xend = THEME , y = 0, yend = sum),
                          lwd = 2) +
             theme_light() +
@@ -718,6 +754,17 @@ q1_sum %>% group_by(THEME) %>%
 # 8 Other                     24
 
 
+# THEME	            RANK1	RANK2	RANK3	RANK4	RANK5	Total
+# Data	                52	45	  30	   23	   10   160
+# Resources	            40	31	  25	   19	   14   129
+# Governance	          46	36	  22	   11	   12   127
+# Evidence	            14	24	  36	   21	   11   106
+# Public_support	       9	16	  20	   10	   5	   60
+# Social_complexity	    13	11	  17	   10	   8	   59
+# Ecological_complexity	13	10	  11	   12	   5	   51
+# Other	                 2	4		  8	     6	   4     24
+
+
 theme_bar <- theme_long %>%
             ggplot(aes(fill = rank, y = count, #label = count,
                        x = factor(THEME,
@@ -740,7 +787,8 @@ theme_bar <- theme_long %>%
                   legend.text = element_text(size = 10),
                   legend.direction = "horizontal",
                   legend.title = element_blank(),
-                  legend.position = "none") +
+                  legend.position = "none",
+                  plot.title = element_text(size = 16, face = "bold")) +
             scale_fill_manual(values = colours) +
             scale_x_discrete(labels = c('Other',
                                         'Ecological_complexity' = 'Ecological Complexity',
@@ -750,9 +798,8 @@ theme_bar <- theme_long %>%
                                         'Governance',
                                         'Resources',
                                         'Data')) +
-            ggtitle('Sources of Uncertainty: Themes') +
-            guides(fill = guide_legend(reverse = TRUE,
-                                       label.position = "bottom")) 
+            ggtitle('Themes') 
+
 
             # geom_text(size = 4, alpha = 1, colour = "white",
             #           position = position_stack(vjust = 0.55)) 
@@ -792,6 +839,7 @@ resources <- resources_long %>%
             coord_flip() +
             theme_minimal() +
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             xlab(" ") +
@@ -841,6 +889,7 @@ data <- data_long %>%
             theme_minimal() +
             ylim(0, 80) + 
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             xlab(" ") +
@@ -890,6 +939,7 @@ evidence <- evidence_long %>%
             theme_minimal() +
             ylim(0, 80) + 
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             xlab(" ") +
@@ -927,6 +977,7 @@ governance <- governance_long %>%
             coord_flip() +
             theme_minimal() +
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             ylim(0, 80) + 
@@ -966,6 +1017,7 @@ ecological <- ecological_long %>%
             coord_flip() +
             theme_minimal() +
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             xlab(" ") +
@@ -1009,6 +1061,7 @@ social <- social_long %>%
             coord_flip() +
             theme_minimal() +
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             xlab(" ") +
@@ -1047,6 +1100,7 @@ public <- public_long %>%
             coord_flip() +
             theme_minimal() +
             theme(axis.text = element_text(size = 14),
+                  plot.title = element_text(size = 16, face = "bold"),
                   legend.position = "none") +
             ylab("Count") +
             xlab(" ") +
@@ -1062,9 +1116,7 @@ library(patchwork)
 theme_indv <- data + resources + governance + 
             evidence + public + social +
             ecological + legend +
-            plot_layout(ncol = 2) +
-            plot_annotation(tag_levels = "A")
-
+            plot_layout(ncol = 2) 
 
 ggsave("output/theme_codes.tiff")
 ggsave("output/theme_codes.jpg")
@@ -1082,7 +1134,9 @@ ggsave("output/panel_theme_final.pdf",
        height = 14)
 
 
-ggsave("output/panel_theme_final.tiff")
+ggsave("output/panel_theme_final.tiff",
+       width = 20,
+       height = 14)
 
 ggsave("output/panel_theme_final.jpg",
        width = 20,
