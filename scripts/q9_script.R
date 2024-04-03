@@ -65,6 +65,9 @@ q9_themes <- q9 %>% group_by(Theme) %>%
 # 6 quality_governance    40
 # 7 use_data_evidence     35
 
+write.csv(q9_themes, "data/q9_themes_summaries.csv")
+
+
 # quick look at data
 
 theme_plot <- q9_themes %>% mutate(Theme = fct_reorder(Theme, sum, .desc = FALSE)) %>%
