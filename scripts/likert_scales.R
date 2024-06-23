@@ -109,11 +109,12 @@ write.csv(often_sum, 'data/likert_often_sum.csv', row.names = FALSE)
 likert_often <- read.csv('data/likert_often.csv')
 often_sum <- read.csv('data/likert_often_sum.csv')
 
-colours = c("Always" = "#005f73",
-            "Most of the time" = "#0a9396",
+colours = c("Never" = "#005f73",
+            "Sometimes" = "#0a9396",
             "About half the time" = "#ee9b00",
-            "Sometimes" = "#ca6702",
-            "Never" = "#9b2226")
+            "Most of the time" = "#ca6702",
+            "Always" = "#9b2226")
+
 
 often_sum$ranking <- recode_factor(often_sum$ranking,
                                    'Most.of.the.time' = 'Most of the time',
@@ -141,6 +142,7 @@ often_plot <- ggplot(data = often_sum, aes(x = Question, y = percent, fill = ran
             guides(fill = guide_legend(reverse = TRUE)) +
             scale_fill_manual(values = colours)
 
+often_plot
 
 ######### Likert Uncertainty, Percieved Impact ########
 
@@ -176,12 +178,11 @@ impact_sum$ranking <- factor(impact_sum$ranking,
                                         "Disagree",
                                         "Strongly disagree"))
 
-
-colours_imp = c("Strongly agree" = "#005f73",
-            "Agree" = "#0a9396",
-            "Neither agree nor disagree" = "#ee9b00",
-            "Disagree" = "#ca6702",
-            "Strongly disagree" = "#9b2226")
+colours_imp = c("Strongly disagree" = "#005f73",
+                "Disagree" = "#0a9396",
+                "Neither agree nor disagree" = "#ee9b00",
+                "Agree" = "#ca6702",
+                "Strongly agree" = "#9b2226")
 
 
 impact_plot <- ggplot(data = impact_sum, aes(x = Question,

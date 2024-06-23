@@ -1,5 +1,5 @@
-Question,Always,Most of the time,About half the time,Sometimes,Never
-Long-term decisions (> 3 yrs),43,58,25,26,2
-Short-term decisions (<= 3 yrs),17,37,39,58,3
-Decisions with people outside my organization,24,49,51,29,1
-Decisions with people within my organization,16,30,27,69,12
+Question,Always,Most of the time,About half the time,Sometimes,Never,,,,
+Long-term decisions (> 3 yrs),43,58,25,26,2,,101,154,0.655844156
+Short-term decisions (<= 3 yrs),17,37,39,58,3,,54,,0.350649351
+Decisions with people outside my organization,24,49,51,29,1,,73,,0.474025974
+Decisions with people within my organization,16,30,27,69,12,,81,,0.525974026
